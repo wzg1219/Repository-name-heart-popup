@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>爱心弹窗 - 网页版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+        
+        h1 {
+            color: #e91e63;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            color: #555;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+        
+        .controls {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .control-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+        }
+        
+        .value-display {
+            display: inline-block;
+            margin-left: 10px;
+            font-weight: bold;
+            color: #e91e63;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        button {
+            background: #e91e63;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3);
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background: #d81b60;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(233, 30, 99, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        button.secondary {
+            background: #6c757d;
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+        }
+        
+        button.secondary:hover {
+            background: #5a6268;
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+        }
+        
+        .heart-popup {
+            position: absolute;
+            width: 120px;
+            height: 60px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            user-select: none;
+        }
+        
+        .heart-popup:hover {
+            transform: scale(1.1);
+            z-index: 1001;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .instructions {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-top: 30px;
+            max-width: 600px;
+        }
+        
+        .instructions h2 {
+            color: #e91e63;
+            margin-bottom: 10px;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .controls {
+                padding: 15px;
+            }
+            
+            button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>💖 爱心弹窗生成器</h1>
+        <p class="subtitle">点击按钮生成美丽的爱心形状弹窗，每个弹窗都有温馨的提示语</p>
+    </div>
+    
+    <div class="controls">
+        <div class="control-group">
+            <label for="popupCount">弹窗数量: <span id="countValue" class="value-display">150</span></label>
+            <input type="range" id="popupCount" min="50" max="300" value="150">
+        </div>
+        
+        <div class="control-group">
+            <label for="popupSpeed">生成速度: <span id="speedValue" class="value-display">中等</span></label>
+            <input type="range" id="popupSpeed" min="1" max="5" value="3">
+        </div>
+        
+        <div class="buttons">
+            <button id="generateBtn">生成爱心弹窗</button>
+            <button id="clearBtn" class="secondary">清除所有弹窗</button>
+        </div>
+    </div>
+    
+    <div class="instructions">
+        <h2>使用说明</h2>
+        <ul>
+            <li>调整"弹窗数量"滑块可以控制爱心的大小和密度</li>
+            <li>调整"生成速度"滑块可以控制弹窗出现的快慢</li>
+            <li>点击弹窗可以将其关闭</li>
+            <li>点击"清除所有弹窗"可以一键清除所有弹窗</li>
+            <li>弹窗内容为随机温馨提示语</li>
+        </ul>
+    </div>
+    
+    <div class="footer">
+        <p>基于Python爱心弹窗程序的Web版本 | 使用HTML、CSS和JavaScript构建</p>
+    </div>
+
+    <script>
+        // 提示语数组
+        const tips = [
+            "保持好心情", "我想你了", "保持微笑",
+            "天天都要元气满满", "别熬夜",
+            "记得吃水果", "好好吃饭", "多喝水",
+            "每天都要开心", "保持你的纯真",
+            "你的微笑很特别", "要一直幸福哦",
+            "想你的每一天", "照顾好自己", "记得想我",
+            "你是最棒的", "今天也要加油", "保持乐观",
+            "好好爱自己", "记得休息", "保持热情",
+            "坚持梦想", "保持好奇心", "享受当下"
+        ];
+        
+        // 颜色方案 - 粉色系
+        const colors = [
+            {bg: "#FFB6C1", text: "#8B0000"}, // 浅粉色
+            {bg: "#FFC0CB", text: "#8B0000"}, // 粉色
+            {bg: "#FF69B4", text: "#FFFFFF"}, // 热粉色
+            {bg: "#FF1493", text: "#FFFFFF"}, // 深粉色
+            {bg: "#DB7093", text: "#FFFFFF"}, // 紫红色
+            {bg: "#FFAEB9", text: "#8B0000"}, // 浅粉红
+            {bg: "#FF82AB", text: "#8B0000"}, // 粉红色
+            {bg: "#FF6EB4", text: "#FFFFFF"}, // 中粉红
+            {bg: "#EE799F", text: "#FFFFFF"}, // 印度红
+            {bg: "#CD6889", text: "#FFFFFF"}  // 深粉红
+        ];
+        
+        // DOM元素
+        const generateBtn = document.getElementById('generateBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const popupCount = document.getElementById('popupCount');
+        const popupSpeed = document.getElementById('popupSpeed');
+        const countValue = document.getElementById('countValue');
+        const speedValue = document.getElementById('speedValue');
+        
+        // 更新数值显示
+        popupCount.addEventListener('input', function() {
+            countValue.textContent = this.value;
+        });
+        
+        popupSpeed.addEventListener('input', function() {
+            const speedText = ['很慢', '较慢', '中等', '较快', '很快'];
+            speedValue.textContent = speedText[this.value - 1];
+        });
+        
+        // 生成爱心形状的点坐标
+        function generateHeartPoints(numPoints) {
+            const points = [];
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            const scale = Math.min(window.innerWidth, window.innerHeight) / 40;
+            
+            for (let i = 0; i < numPoints; i++) {
+                const t = i / numPoints * 2 * Math.PI;
+                // 爱心形状参数方程
+                const x = 16 * Math.pow(Math.sin(t), 3);
+                const y = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t);
+                
+                // 缩放和平移
+                const pointX = centerX + x * scale;
+                const pointY = centerY - y * scale; // 减号让爱心正着显示
+                
+                // 确保点在屏幕内
+                if (pointX > 60 && pointX < window.innerWidth - 60 && 
+                    pointY > 30 && pointY < window.innerHeight - 30) {
+                    points.push({x: pointX, y: pointY});
+                }
+            }
+            
+            return points;
+        }
+        
+        // 创建弹窗
+        function createPopup(x, y, index) {
+            const popup = document.createElement('div');
+            popup.className = 'heart-popup';
+            
+            // 随机颜色
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            popup.style.backgroundColor = color.bg;
+            popup.style.color = color.text;
+            
+            // 随机提示语
+            const tip = tips[Math.floor(Math.random() * tips.length)];
+            popup.textContent = tip;
+            
+            // 设置位置
+            popup.style.left = `${x - 60}px`;
+            popup.style.top = `${y - 30}px`;
+            
+            // 添加点击关闭功能
+            popup.addEventListener('click', function() {
+                this.style.opacity = '0';
+                this.style.transform = 'scale(0.5)';
+                setTimeout(() => {
+                    if (this.parentNode) {
+                        this.parentNode.removeChild(this);
+                    }
+                }, 300);
+            });
+            
+            // 添加到页面
+            document.body.appendChild(popup);
+            
+            // 添加淡入动画
+            setTimeout(() => {
+                popup.style.opacity = '1';
+                popup.style.transform = 'scale(1)';
+            }, 10);
+            
+            return popup;
+        }
+        
+        // 生成爱心弹窗
+        generateBtn.addEventListener('click', function() {
+            // 禁用按钮防止重复点击
+            generateBtn.disabled = true;
+            generateBtn.textContent = '生成中...';
+            
+            const numPoints = parseInt(popupCount.value);
+            const speed = parseInt(popupSpeed.value);
+            const points = generateHeartPoints(numPoints);
+            
+            // 计算延迟时间（速度越快，延迟越短）
+            const delay = 200 - (speed - 1) * 40;
+            
+            let created = 0;
+            const interval = setInterval(() => {
+                if (created < points.length) {
+                    createPopup(points[created].x, points[created].y, created);
+                    created++;
+                } else {
+                    clearInterval(interval);
+                    generateBtn.disabled = false;
+                    generateBtn.textContent = '生成爱心弹窗';
+                }
+            }, delay);
+        });
+        
+        // 清除所有弹窗
+        clearBtn.addEventListener('click', function() {
+            const popups = document.querySelectorAll('.heart-popup');
+            popups.forEach(popup => {
+                popup.style.opacity = '0';
+                popup.style.transform = 'scale(0.5)';
+                setTimeout(() => {
+                    if (popup.parentNode) {
+                        popup.parentNode.removeChild(popup);
+                    }
+                }, 300);
+            });
+        });
+        
+        // 窗口大小改变时重新调整弹窗位置
+        window.addEventListener('resize', function() {
+            // 在实际应用中，可以添加重新计算弹窗位置的逻辑
+            // 但为了简化，这里只是提示用户刷新页面
+            const popups = document.querySelectorAll('.heart-popup');
+            if (popups.length > 0) {
+                if (confirm('检测到窗口大小变化，是否刷新页面以重新生成弹窗？')) {
+                    location.reload();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
