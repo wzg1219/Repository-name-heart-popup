@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>爱心弹窗 - 网页版</title>
+    <title>爱心弹窗</title>
     <style>
         * {
             margin: 0;
@@ -12,114 +12,127 @@
         }
         
         body {
-            font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            overflow-x: hidden;
+            overflow: hidden;
             padding: 20px;
+            color: #5a3d3d;
         }
         
         .header {
             text-align: center;
             margin-bottom: 30px;
-            max-width: 600px;
+            max-width: 100%;
         }
         
         h1 {
-            color: #e91e63;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
         }
         
         .subtitle {
-            color: #555;
-            font-size: 1.1rem;
-            margin-bottom: 20px;
+            font-size: 1rem;
+            opacity: 0.9;
+            color: #fff;
         }
         
         .controls {
-            background: white;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
             padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
             width: 100%;
-            max-width: 500px;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
         
-        .control-group {
-            margin-bottom: 15px;
+        .control-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
         
-        label {
-            display: block;
-            margin-bottom: 5px;
+        .control-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .control-value {
             font-weight: bold;
-            color: #555;
+            color: #e91e63;
+            min-width: 40px;
+            text-align: right;
         }
         
         input[type="range"] {
             width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e0e0e0;
+            outline: none;
+            -webkit-appearance: none;
         }
         
-        .value-display {
-            display: inline-block;
-            margin-left: 10px;
-            font-weight: bold;
-            color: #e91e63;
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e91e63;
+            cursor: pointer;
         }
         
         .buttons {
             display: flex;
             gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
+            margin-top: 10px;
         }
         
         button {
+            flex: 1;
             background: #e91e63;
             color: white;
             border: none;
-            padding: 12px 25px;
-            border-radius: 50px;
+            padding: 12px;
+            border-radius: 10px;
             font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3);
-            font-weight: bold;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(233, 30, 99, 0.3);
         }
         
-        button:hover {
+        button:hover, button:active {
             background: #d81b60;
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(233, 30, 99, 0.4);
-        }
-        
-        button:active {
-            transform: translateY(1px);
         }
         
         button.secondary {
-            background: #6c757d;
-            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+            background: #9e9e9e;
+            box-shadow: 0 4px 10px rgba(158, 158, 158, 0.3);
         }
         
-        button.secondary:hover {
-            background: #5a6268;
-            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+        button.secondary:hover, button.secondary:active {
+            background: #757575;
         }
         
         .heart-popup {
             position: absolute;
-            width: 120px;
-            height: 60px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            width: 100px;
+            height: 50px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -127,51 +140,35 @@
             cursor: pointer;
             z-index: 1000;
             transition: all 0.3s;
-            padding: 10px;
-            font-size: 14px;
+            padding: 8px;
+            font-size: 12px;
             font-weight: bold;
-            border: 2px solid rgba(255, 255, 255, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.7);
             user-select: none;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
         }
         
-        .heart-popup:hover {
-            transform: scale(1.1);
-            z-index: 1001;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        @keyframes fadeIn {
+            to { opacity: 1; }
         }
         
-        .instructions {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            margin-top: 30px;
-            max-width: 600px;
-        }
-        
-        .instructions h2 {
-            color: #e91e63;
-            margin-bottom: 10px;
-        }
-        
-        .instructions ul {
-            padding-left: 20px;
-        }
-        
-        .instructions li {
-            margin-bottom: 8px;
+        .heart-popup:active {
+            transform: scale(0.9);
         }
         
         .footer {
-            margin-top: 30px;
+            margin-top: 20px;
             text-align: center;
-            color: #777;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            color: #fff;
         }
         
-        @media (max-width: 600px) {
+        /* 响应式调整 */
+        @media (max-width: 480px) {
             h1 {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
             
             .controls {
@@ -179,48 +176,71 @@
             }
             
             button {
-                padding: 10px 20px;
+                padding: 10px;
                 font-size: 0.9rem;
             }
+            
+            .heart-popup {
+                width: 90px;
+                height: 45px;
+                font-size: 11px;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .controls {
+                padding: 12px;
+            }
+            
+            .heart-popup {
+                width: 80px;
+                height: 40px;
+                font-size: 10px;
+            }
+        }
+        
+        /* 爱心动画效果 */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .floating {
+            animation: float 3s ease-in-out infinite;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>💖 爱心弹窗生成器</h1>
-        <p class="subtitle">点击按钮生成美丽的爱心形状弹窗，每个弹窗都有温馨的提示语</p>
+    <div class="header floating">
+        <h1>💖 爱心弹窗</h1>
+        <p class="subtitle">点击生成温馨爱心</p>
     </div>
     
     <div class="controls">
-        <div class="control-group">
-            <label for="popupCount">弹窗数量: <span id="countValue" class="value-display">150</span></label>
-            <input type="range" id="popupCount" min="20" max="300" value="150">
+        <div class="control-row">
+            <span class="control-label">弹窗数量</span>
+            <span id="countValue" class="control-value">120</span>
         </div>
+        <input type="range" id="popupCount" min="60" max="200" value="120">
         
-        <div class="control-group">
-            <label for="popupSpeed">生成速度: <span id="speedValue" class="value-display">中等</span></label>
-            <input type="range" id="popupSpeed" min="1" max="5" value="3">
+        <div class="control-row">
+            <span class="control-label">生成速度</span>
+            <span id="speedValue" class="control-value">中速</span>
         </div>
+        <input type="range" id="popupSpeed" min="1" max="5" value="3">
         
         <div class="buttons">
-            <button id="generateBtn">生成爱心弹窗</button>
-            <button id="clearBtn" class="secondary">清除所有弹窗</button>
+            <button id="generateBtn">生成爱心</button>
+            <button id="clearBtn" class="secondary">清除</button>
         </div>
-    </div>
-    
-    <div class="instructions">
-        <h2>使用说明</h2>
-        <ul>
-            <li>调整"弹窗数量"滑块可以控制爱心的大小和密度</li>
-            <li>调整"生成速度"滑块可以控制弹窗出现的快慢</li>
-            <li>点击弹窗可以将其关闭</li>
-            <li>点击"清除所有弹窗"可以一键清除所有弹窗</li>
-            <li>弹窗内容为随机温馨提示语</li>
-        </ul>
     </div>
     
     <div class="footer">
-        <p>基于Python爱心弹窗程序的Web版本 | 使用HTML、CSS和JavaScript构建</p>
+        <p>点击弹窗可关闭 | 长按可快速清除</p>
     </div>
 
     <script>
@@ -233,22 +253,18 @@
             "你的微笑很特别", "要一直幸福哦",
             "想你的每一天", "照顾好自己", "记得想我",
             "你是最棒的", "今天也要加油", "保持乐观",
-            "好好爱自己", "记得休息", "保持热情",
-            "坚持梦想", "保持好奇心", "享受当下"
+            "好好爱自己", "记得休息", "保持热情"
         ];
         
         // 颜色方案 - 粉色系
         const colors = [
-            {bg: "#FFB6C1", text: "#8B0000"}, // 浅粉色
-            {bg: "#FFC0CB", text: "#8B0000"}, // 粉色
-            {bg: "#FF69B4", text: "#FFFFFF"}, // 热粉色
-            {bg: "#FF1493", text: "#FFFFFF"}, // 深粉色
-            {bg: "#DB7093", text: "#FFFFFF"}, // 紫红色
-            {bg: "#FFAEB9", text: "#8B0000"}, // 浅粉红
-            {bg: "#FF82AB", text: "#8B0000"}, // 粉红色
-            {bg: "#FF6EB4", text: "#FFFFFF"}, // 中粉红
-            {bg: "#EE799F", text: "#FFFFFF"}, // 印度红
-            {bg: "#CD6889", text: "#FFFFFF"}  // 深粉红
+            {bg: "rgba(255, 182, 193, 0.9)", text: "#8B0000"},
+            {bg: "rgba(255, 192, 203, 0.9)", text: "#8B0000"},
+            {bg: "rgba(255, 105, 180, 0.9)", text: "#FFFFFF"},
+            {bg: "rgba(255, 20, 147, 0.9)", text: "#FFFFFF"},
+            {bg: "rgba(219, 112, 147, 0.9)", text: "#FFFFFF"},
+            {bg: "rgba(255, 174, 185, 0.9)", text: "#8B0000"},
+            {bg: "rgba(255, 130, 171, 0.9)", text: "#8B0000"}
         ];
         
         // DOM元素
@@ -265,7 +281,7 @@
         });
         
         popupSpeed.addEventListener('input', function() {
-            const speedText = ['很慢', '较慢', '中等', '较快', '很快'];
+            const speedText = ['很慢', '慢速', '中速', '快速', '很快'];
             speedValue.textContent = speedText[this.value - 1];
         });
         
@@ -274,7 +290,7 @@
             const points = [];
             const centerX = window.innerWidth / 2;
             const centerY = window.innerHeight / 2;
-            const scale = Math.min(window.innerWidth, window.innerHeight) / 40;
+            const scale = Math.min(window.innerWidth, window.innerHeight) / 50; // 调整缩放比例适应手机
             
             for (let i = 0; i < numPoints; i++) {
                 const t = i / numPoints * 2 * Math.PI;
@@ -284,11 +300,11 @@
                 
                 // 缩放和平移
                 const pointX = centerX + x * scale;
-                const pointY = centerY - y * scale; // 减号让爱心正着显示
+                const pointY = centerY - y * scale;
                 
                 // 确保点在屏幕内
-                if (pointX > 60 && pointX < window.innerWidth - 60 && 
-                    pointY > 30 && pointY < window.innerHeight - 30) {
+                if (pointX > 50 && pointX < window.innerWidth - 50 && 
+                    pointY > 25 && pointY < window.innerHeight - 25) {
                     points.push({x: pointX, y: pointY});
                 }
             }
@@ -311,8 +327,8 @@
             popup.textContent = tip;
             
             // 设置位置
-            popup.style.left = `${x - 60}px`;
-            popup.style.top = `${y - 30}px`;
+            popup.style.left = `${x - 50}px`;
+            popup.style.top = `${y - 25}px`;
             
             // 添加点击关闭功能
             popup.addEventListener('click', function() {
@@ -325,14 +341,21 @@
                 }, 300);
             });
             
+            // 添加长按快速清除功能
+            let pressTimer;
+            popup.addEventListener('touchstart', function(e) {
+                pressTimer = setTimeout(() => {
+                    clearAllPopups();
+                }, 1000);
+                e.preventDefault();
+            });
+            
+            popup.addEventListener('touchend', function() {
+                clearTimeout(pressTimer);
+            });
+            
             // 添加到页面
             document.body.appendChild(popup);
-            
-            // 添加淡入动画
-            setTimeout(() => {
-                popup.style.opacity = '1';
-                popup.style.transform = 'scale(1)';
-            }, 10);
             
             return popup;
         }
@@ -358,13 +381,13 @@
                 } else {
                     clearInterval(interval);
                     generateBtn.disabled = false;
-                    generateBtn.textContent = '生成爱心弹窗';
+                    generateBtn.textContent = '生成爱心';
                 }
             }, delay);
         });
         
         // 清除所有弹窗
-        clearBtn.addEventListener('click', function() {
+        function clearAllPopups() {
             const popups = document.querySelectorAll('.heart-popup');
             popups.forEach(popup => {
                 popup.style.opacity = '0';
@@ -375,20 +398,39 @@
                     }
                 }, 300);
             });
+        }
+        
+        clearBtn.addEventListener('click', clearAllPopups);
+        
+        // 添加触摸事件支持
+        generateBtn.addEventListener('touchstart', function() {
+            this.style.transform = 'scale(0.95)';
         });
         
-        // 窗口大小改变时重新调整弹窗位置
+        generateBtn.addEventListener('touchend', function() {
+            this.style.transform = 'scale(1)';
+        });
+        
+        clearBtn.addEventListener('touchstart', function() {
+            this.style.transform = 'scale(0.95)';
+        });
+        
+        clearBtn.addEventListener('touchend', function() {
+            this.style.transform = 'scale(1)';
+        });
+        
+        // 窗口大小改变时提示
         window.addEventListener('resize', function() {
-            // 在实际应用中，可以添加重新计算弹窗位置的逻辑
-            // 但为了简化，这里只是提示用户刷新页面
             const popups = document.querySelectorAll('.heart-popup');
             if (popups.length > 0) {
-                if (confirm('检测到窗口大小变化，是否刷新页面以重新生成弹窗？')) {
-                    location.reload();
+                if (confirm('屏幕尺寸已改变，是否重新生成爱心？')) {
+                    clearAllPopups();
+                    setTimeout(() => {
+                        generateBtn.click();
+                    }, 500);
                 }
             }
         });
     </script>
 </body>
-
 </html>
